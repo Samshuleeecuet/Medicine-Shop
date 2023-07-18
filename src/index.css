@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.active{
+    @apply font-medium bg-rose-600 rounded  text-white tracking-wide transition-colors duration-200
+  }
+  
+  .default{
+    @apply font-medium  bg-rose-600 rounded tracking-wide text-white transition-colors duration-200 hover:bg-rose-300
+  }
