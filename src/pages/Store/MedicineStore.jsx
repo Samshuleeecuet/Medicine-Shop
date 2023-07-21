@@ -10,11 +10,12 @@ const MedicineStore = () => {
     let expired = []
     let expiredSoon = []
     let exp ;
+    let totalQuantity = 0;
     // useEffect(()=>{
     //     const interval = setInterval(()=>{
     //         setExpire(!isExpire)
     //     })
-    // },[])
+    // },[isExpire])
 
     const lightStyle = {
         backgroundColor: isExpire ? 'red' : 'gray', // Change this to the color you want.
@@ -39,13 +40,14 @@ const MedicineStore = () => {
                     <th>Expire<br/> Date</th>
                     <th>Box<br/> Number</th>
                     <th>Entry<br/> Date</th>
+                    <th>Available</th>
                     <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
                 {/* row 1 */}
                 {
-                    isMedicines && isMedicines.map((item)=> <tr key={item.medicineId}>
+                    isMedicines && isMedicines.map((item)=> <tr key={item.medicineId} className='text-xs'>
                     <td>
                         {item.medicineId}
                     </td>
@@ -53,7 +55,7 @@ const MedicineStore = () => {
                     <div className="flex items-center space-x-3">                         
                     <div>
                         <div className="font-bold">{item.medicineName} | {item.type}</div>
-                        <span className="badge badge-secondary ">{item.genericName}</span>
+                        <span className="badge badge-secondary text-xs">{item.genericName}</span>
                     </div>
                     </div>
                     </td>
@@ -68,11 +70,7 @@ const MedicineStore = () => {
                         }
                     </th>
                     <td>
-                    {
-                            item.medicines.map((medicine,index)=>{
-                                return <p key={index}>{medicine.price}</p>
-                            })
-                        }
+                        <p>{item.medicines[item.medicines.length-1].price}</p>
                     </td>
                     <td>
                        {
@@ -96,6 +94,24 @@ const MedicineStore = () => {
                             })
                         }
                     </td>
+                    <th>
+                        <p className='hidden'>
+                        {
+                             totalQuantity = item.medicines.reduce(function(a,b){ return a+parseInt(b.quantity)},0)
+        
+                        }</p>
+
+                           
+                        {
+                            totalQuantity>30 && <p className='btn btn-xs  bg-green-400/90 hover:bg-green-400/90 text-white'>In Stock</p>
+                        }  
+                        {
+                            (totalQuantity<30 && totalQuantity>0) && <p className='btn btn-xs  bg-yellow-400/90 hover:bg-yellow-400/90 text-white'>In Stock</p>
+                        } 
+                        {
+                            totalQuantity == 0 && <p className='btn btn-xs  bg-red-700/90 hover:bg-red-700/90 text-white'>Out of Stock Stock</p>
+                        }                  
+                    </th>
                     <th key={item.medicineId}>
                         {
                             item.medicines.map((batch,index)=>{
@@ -106,16 +122,16 @@ const MedicineStore = () => {
                                     batch.box= item.box
                                     batch.medicineName = item.medicineName
                                     expired.push(batch)
-                                    return <p><p className='btn btn-xs bg-red-700/90 hover:bg-red-700/90 text-white'>Expired</p><br/></p>
+                                    return <><p className='btn btn-xs bg-red-700/90 hover:bg-red-700/90 text-white'>Expired</p><br/></>
                                 }
 
                                 if(exp.includes('months') || exp.includes('month')){
-                                    return <p><p className='btn btn-xs bg-green-400/90 hover:bg-green-400/90 text-white'>Expired {exp}</p><br/></p>
+                                    return <><p className='btn btn-xs bg-green-400/90 hover:bg-green-400/90 text-white'>Expired {exp}</p><br/></>
                                 }
                                 
                                 if(exp.includes('days')){
                                     expiredSoon.push(batch)
-                                    return <p><p className='btn btn-xs bg-yellow-400/90 hover:bg-yellow-400/90 text-white'>Expired {exp}</p><br/></p>
+                                    return <><p className='btn btn-xs bg-yellow-400/90 hover:bg-yellow-400/90 text-white'>Expired {exp}</p><br/></>
                                 }
                                 
                             })
@@ -146,7 +162,7 @@ const MedicineStore = () => {
     </thead>
     <tbody>
       {
-        expired && expired.map((item,index)=> <tr key={index}>
+        expired && expired.map((item,index)=> <tr key={index} className='text-xs'>
                     <td>{item.medicineName}</td>
                     <td>{item.batchNumber}</td>
                     <td>{item.box}</td>

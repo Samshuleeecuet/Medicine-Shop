@@ -4,9 +4,11 @@ import avatarImg from './../assets/placeholder.jpg';
 import { NavLink, useNavigate } from 'react-router-dom';
 import useUser from '../hooks/useUser/useUser';
 import { AuthContext } from '../provider/AuthProvider';
-
+import { FiShoppingCart } from 'react-icons/fi';
+import useCart from '../hooks/useCart/useCart';
 const Navbar = () => {
   const [isUser] = useUser()
+  const [Cart] = useCart()
   const {logOut,setLoading} = useContext(AuthContext)
   console.log(isUser)
   const navigate = useNavigate()
@@ -41,6 +43,7 @@ const Navbar = () => {
     </ul>
   </div>
   <div className="navbar-end gap-4">
+    <p className='flex relative mr-4'><FiShoppingCart className='text-2xl text-red-500'/><span className="bg-rose-700/80 text-white flex flex-col items-center justify-center p-1 w-6 h-6 rounded-full absolute bottom-2 left-4">{Cart.length}</span></p>
     <button onClick={handleLogOut} className='btn btn-error'>LogOut</button>
     <div className="avatar">
         <div className="w-12 mask mask-squircle">

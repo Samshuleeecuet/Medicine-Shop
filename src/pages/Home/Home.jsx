@@ -1,14 +1,49 @@
 import React, { useState } from 'react';
 import useFindMedicine from '../../hooks/useFindMedicine/useFindMedicine';
 import useMedicineStore from '../../hooks/useMedicineStore/useMedicineStore';
+import { IoMdAdd } from 'react-icons/io';
+import { toast } from 'react-hot-toast';
+import useUser from '../../hooks/useUser/useUser';
+import useCart from '../../hooks/useCart/useCart';
 const Home = () => {
     const [searchvalue,setSearchvalue] = useState(null);
     const [SearchMedicine] = useFindMedicine(searchvalue)
-    const [,refetch,] = useMedicineStore()
+    const [isUser] = useUser()
+    const [Cart,refetch] = useCart()
     const handleChange =(e)=>{
         setSearchvalue(e.target.value)
     }
-    console.log(SearchMedicine)
+    console.log(Cart)
+    const handleAddToCart = (item)=>{
+        console.log(item)
+        const email = isUser.email;
+        const medicineId = item.medicineId;
+        const medicineName = item.medicineName;
+        const quantity = 1;
+        const companyName = item.companyName;
+        const medicines = item.medicines;
+        const price = item.medicines[item.medicines.length-1].price;
+        const type = item.type;
+        const medicine = {medicineId,medicineName,companyName,type,quantity,medicines,price,email}
+        fetch('http://localhost:5000/addtocart',{
+                    method: 'POST',
+                        headers:{
+                          'content-type': 'application/json'
+                        },
+                        body: JSON.stringify(medicine)
+                })
+                .then(res=> res.json())
+                .then(result=>{
+                    refetch()
+                    console.log(result)
+                    if(result.insertedId){
+                        toast.success('Medicine Added To Cart')
+                    }
+                    if(result.message){
+                        toast.error(result.message)
+                    }
+                })
+    }
     const handleLight = (medicine)=>{
         console.log(medicine.bulb)
         if(medicine.bulb === 'off'){
@@ -60,12 +95,13 @@ const Home = () => {
                   <th>Id</th>
                     <th>Name | Type<br/><span className='text-gray-800/50'>Generic</span></th>
                     <th>Company</th>
-                    <th>Batch No.</th>
+                    <th>Batch<br/> No.</th>
                     <th>Price</th>
                     <th>Avalaible<br/> Quantity</th>
                     <th>Expire<br/> Date</th>
-                    <th>Box<br/> Number</th>
+                    <th>Box<br/> No.</th>
                     <th>EntryDate<br/> Date</th>
+                    <th>Order Now</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -77,7 +113,7 @@ const Home = () => {
                     </td>
                     <td>
                     <div className="flex items-center space-x-3">                         
-                    <div onClick={()=>handleLight(item)}>
+                    <div onClick={()=>handleLight(item)} className='cursor-pointer'>
                         <div className="font-bold">{item.medicineName} | {item.type}</div>
                         <span className="badge badge-secondary ">{item.genericName}</span>
                     </div>
@@ -94,11 +130,7 @@ const Home = () => {
                         }
                     </th>
                     <td>
-                    {
-                            item.medicines.map((medicine,index)=>{
-                                return <p key={index}>{medicine.price}</p>
-                            })
-                        }
+                    <p>{item.medicines[item.medicines.length-1].price}</p>
                     </td>
                     <td>
                        {
@@ -121,6 +153,9 @@ const Home = () => {
                                 return <p key={index}>{medicine.entrydate}</p>
                             })
                         }
+                    </td>
+                    <td>
+                        <p  onClick={()=>handleAddToCart(item)} className='text-xs btn btn-xs bg-green-400 hover:bg-green-400'><IoMdAdd/>Add</p>
                     </td>
                     
                 </tr>
