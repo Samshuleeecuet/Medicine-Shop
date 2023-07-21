@@ -60,46 +60,71 @@ const Home = () => {
                   <th>Id</th>
                     <th>Name | Type<br/><span className='text-gray-800/50'>Generic</span></th>
                     <th>Company</th>
+                    <th>Batch No.</th>
                     <th>Price</th>
                     <th>Avalaible<br/> Quantity</th>
-                    <th>Box<br/> Number</th>
                     <th>Expire<br/> Date</th>
-                    <th>Status</th>
+                    <th>Box<br/> Number</th>
+                    <th>EntryDate<br/> Date</th>
                 </tr>
                 </thead>
                 <tbody>
                 {/* row 1 */}
                 {
-                    SearchMedicine.map(item=> <tr key={item.medicineId}>
-                        <td>
-                            {item.medicineId}
-                        </td>
-                        <td>
-                        <div className="flex items-center space-x-3">                         
-                        <div>
-                            <div className="font-bold">{item.medicineName} | {item.type}</div>
-                            <span className="badge badge-secondary ">{item.genericName}</span>
-                        </div>
-                        </div>
-                        </td>
-                        <td>
-                        {item.companyName}
-                        </td>
-                        <td>{item.price}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.box}</td>
-                        <td>{item.expiredate}</td>
-                        <th>
-                            {
-                                item.bulb === 'off' && <button onClick={()=>handleLight(item)} className="btn btn-ghost btn-xs">Turn On</button>
-                            }
-                            {
-                                item.bulb === 'on' && <button onClick={()=>handleLight(item)} className="btn btn-ghost btn-xs">Turn off</button>
-                            }
-                        
-                        </th>
-                    </tr> )
-                }     
+                    SearchMedicine && SearchMedicine.map((item)=> <tr key={item.medicineId}>
+                    <td>
+                        {item.medicineId}
+                    </td>
+                    <td>
+                    <div className="flex items-center space-x-3">                         
+                    <div onClick={()=>handleLight(item)}>
+                        <div className="font-bold">{item.medicineName} | {item.type}</div>
+                        <span className="badge badge-secondary ">{item.genericName}</span>
+                    </div>
+                    </div>
+                    </td>
+                    <td>
+                    {item.companyName}
+                    </td>
+                    <th>
+                        {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.batchNumber}</p>
+                            })
+                        }
+                    </th>
+                    <td>
+                    {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.price}</p>
+                            })
+                        }
+                    </td>
+                    <td>
+                       {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.quantity}</p>
+                            })
+                        }
+                    </td>
+                    <td>
+                    {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.expiredate}</p>
+                            })
+                    }
+                    </td>
+                    <td>{item.box}</td>
+                    <td>
+                        {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.entrydate}</p>
+                            })
+                        }
+                    </td>
+                    
+                </tr>
+                )}    
                 </tbody>
             </table>
             </div>

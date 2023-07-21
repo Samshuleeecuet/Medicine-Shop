@@ -1,33 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useMedicineStore from '../../hooks/useMedicineStore/useMedicineStore';
 import moment from 'moment';
-import EntryReport from './EntryReport';
 
 
 const MedicineStore = () => {
     const [isMedicines] = useMedicineStore()
- let exp;
+    const [isExpire, setExpire] = useState(false)
+    console.log(isMedicines)
+    let expired = []
+    let expiredSoon = []
+    let exp ;
+    // useEffect(()=>{
+    //     const interval = setInterval(()=>{
+    //         setExpire(!isExpire)
+    //     })
+    // },[])
+
+    const lightStyle = {
+        backgroundColor: isExpire ? 'red' : 'gray', // Change this to the color you want.
+      };
+
     return (
         <div className='pt-10'>
             <div>
                 <h1 className='pb-6 text-2xl font-bold mb-8 text-center font-serif'>Medicine Info</h1>
             </div>
             <div className='flex'>
-                <div>
-                <EntryReport/>
-
-                </div>
-                <div className="overflow-x-auto lg:w-2/3 mx-auto">
+                <div className="overflow-x-auto w-full mx-auto">
             <table className="table">
                 <thead>
                 <tr className=' bg-gray-400/40 text-black'>
                     <th>Id</th>
                     <th>Name | Type<br/><span className='text-gray-800/50'>Generic</span></th>
                     <th>Company</th>
+                    <th>Batch No</th>
                     <th>Price</th>
                     <th>Avalaible<br/> Quantity</th>
-                    <th>Box<br/> Number</th>
                     <th>Expire<br/> Date</th>
+                    <th>Box<br/> Number</th>
                     <th>Entry<br/> Date</th>
                     <th>Status</th>
                 </tr>
@@ -50,59 +60,107 @@ const MedicineStore = () => {
                     <td>
                     {item.companyName}
                     </td>
-                    <td>{item.price}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.box}</td>
-                    <td>{item.expiredate}</td>
-                    <td>{item.entrydate}</td>
-                    <th key={item.medicineId}>
-
+                    <th>
                         {
-                        moment(item.expiredate, "DD-MM-YYYY").fromNow().split(' ').map((expi,index)=>{
-                                    exp=parseInt(expi);
-                                    
-                                    if(exp){
-                                        
-                                        if(moment(item.expiredate, "DD-MM-YYYY").fromNow().includes('hours')){
-                                            return <button className="btn btn-warning btn-xs">Expired {moment(item.expiredate, "DD-MM-YYYY").fromNow()}</button> 
-                                        }
-                                        if(exp>7){
-                                            if(moment(item.expiredate, "DD-MM-YYYY").fromNow().includes('in')){
-                                                return <button className="btn btn-success btn-xs">Expired {moment(item.expiredate, "DD-MM-YYYY").fromNow()}</button> 
-                                            }
-                                        }
-
-                                        if(exp<7){
-                                            if(moment(item.expiredate, "DD-MM-YYYY").fromNow().includes('in')){
-                                                return <button className="btn btn-warning btn-xs">Expired {moment(item.expiredate, "DD-MM-YYYY").fromNow()}</button> 
-                                            }
-                                            
-                                        }
-                                    }
-                                    else{
-                                        if(expi.includes('a' && 'ago')){
-                                            return <p className="btn btn-error btn-xs">Expired</p> 
-                                        }
-                                        if(expi.includes('in')){
-                                            if(moment(item.expiredate, "DD-MM-YYYY").fromNow() === 'in a day'){
-                                                return <p className="btn btn-error btn-xs">Expired</p> 
-                                            }
-                                        }
-                                    }
-                                    
-                                })
-                                
-                                
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.batchNumber}</p>
+                            })
                         }
-                        
-                    {/* <button className="btn btn-error btn-xs">details</button> */}
+                    </th>
+                    <td>
+                    {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.price}</p>
+                            })
+                        }
+                    </td>
+                    <td>
+                       {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.quantity}</p>
+                            })
+                        }
+                    </td>
+                    <td>
+                    {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.expiredate}</p>
+                            })
+                    }
+                    </td>
+                    <td>{item.box}</td>
+                    <td>
+                        {
+                            item.medicines.map((medicine,index)=>{
+                                return <p key={index}>{medicine.entrydate}</p>
+                            })
+                        }
+                    </td>
+                    <th key={item.medicineId}>
+                        {
+                            item.medicines.map((batch,index)=>{
+                                exp = moment(batch.expiredate,'DD-MM-YYYY').fromNow()
+                                // console.log(exp)
+                                // console.log(exp.includes('days'&& 'in'))
+                                if(exp.includes('ago')){
+                                    batch.box= item.box
+                                    batch.medicineName = item.medicineName
+                                    expired.push(batch)
+                                    return <p><p className='btn btn-xs bg-red-700/90 hover:bg-red-700/90 text-white'>Expired</p><br/></p>
+                                }
+
+                                if(exp.includes('months') || exp.includes('month')){
+                                    return <p><p className='btn btn-xs bg-green-400/90 hover:bg-green-400/90 text-white'>Expired {exp}</p><br/></p>
+                                }
+                                
+                                if(exp.includes('days')){
+                                    expiredSoon.push(batch)
+                                    return <p><p className='btn btn-xs bg-yellow-400/90 hover:bg-yellow-400/90 text-white'>Expired {exp}</p><br/></p>
+                                }
+                                
+                            })
+                        }
                     </th>
                 </tr>
-        )
-                }
-                    
+                )}    
                 </tbody>
             </table>
+            </div>
+            <div className='gap-4'>
+
+            <div className='flex flex-col justify-center items-center'>
+            <div className='h-20 w-20 rounded-full flex flex-col items-center font-semibold text-white justify-center' style={lightStyle}>
+                <p>Expired</p>
+            </div>
+            <div className='mt-10'>
+                
+            <div className="overflow-x-auto">
+  <table className="table">
+    {/* head */}
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Batch No.</th>
+        <th>Box No.</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        expired && expired.map((item,index)=> <tr key={index}>
+                    <td>{item.medicineName}</td>
+                    <td>{item.batchNumber}</td>
+                    <td>{item.box}</td>
+                </tr>
+        )
+      }
+    </tbody>
+  </table>
+</div>
+
+            </div>
+            </div>
+            
+
             </div>
             </div>
             </div>
